@@ -22,9 +22,6 @@ const KManager = ({ active, setImage, close }: propType) => {
     }, [])
     useEffect(() => {
         setImage(selectedImage)
-        return () => {
-            setSelectedImage("")
-        }
     }, [selectedImage])
 
     return active && (
@@ -36,7 +33,7 @@ const KManager = ({ active, setImage, close }: propType) => {
                     <div className=''>
                         <ul className="grid gap-6 w-full md:grid-cols-2 py-3">
                             <li>
-                                <input type="radio" id="hosting-small" name="hosting" value="hosting-small" className="hidden peer" onChange={e => setUpload(e.target.checked)} defaultChecked required />
+                                <input type="radio" id="hosting-small" name="hosting" value="hosting-small" className="hidden peer" onChange={() => setUpload(true)} defaultChecked required />
                                 <label htmlFor="hosting-small" className="inline-flex justify-center items-center p-3 w-full text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-indigo-500 peer-checked:border-indigo-600 peer-checked:text-indigo-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
                                     <div className="block">
                                         <div className="w-full text-lg font-semibold">Upload</div>
@@ -44,7 +41,7 @@ const KManager = ({ active, setImage, close }: propType) => {
                                 </label>
                             </li>
                             <li>
-                                <input type="radio" id="hosting-big" name="hosting" value="hosting-big" className="hidden peer" onChange={e => setUpload(!e.target.checked)} />
+                                <input type="radio" id="hosting-big" name="hosting" value="hosting-big" className="hidden peer" onChange={() => setUpload(false)} />
                                 <label htmlFor="hosting-big" className="inline-flex justify-center items-center p-3 w-full text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-indigo-500 peer-checked:border-indigo-600 peer-checked:text-indigo-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
                                     <div className="block">
                                         <div className="w-full text-lg font-semibold">Pick</div>
@@ -88,19 +85,19 @@ const KManager = ({ active, setImage, close }: propType) => {
                         </div>
                     </div> : <div className='grid gap-6 w-full md:grid-cols-4 p-3 max-h-96 overflow-auto'>
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
+                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Flogo-dark.svg?alt=media&token=f90903d2-d318-4f29-bc6c-1752a649a594"} />
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
+                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Flogo-dark.svg?alt=media&token=f90903d2-d318-4f29-bc6c-1752a649a594"} />
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
+                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Flogo-dark.svg?alt=media&token=f90903d2-d318-4f29-bc6c-1752a649a594"} />
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
+                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Flogo-dark.svg?alt=media&token=f90903d2-d318-4f29-bc6c-1752a649a594"} />
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
+                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Flogo-dark.svg?alt=media&token=f90903d2-d318-4f29-bc6c-1752a649a594"} />
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
+                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Flogo-dark.svg?alt=media&token=f90903d2-d318-4f29-bc6c-1752a649a594"} />
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
-                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
-                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
-                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
-                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
-                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
-                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
-                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
+                        <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Flogo-dark.svg?alt=media&token=f90903d2-d318-4f29-bc6c-1752a649a594"} />
                         <ImageCard setImg={setSelectedImage} src={"https://firebasestorage.googleapis.com/v0/b/kalopsium.appspot.com/o/minisite%2Fcover.jpeg?alt=media&token=88c18250-d4a1-4a26-88d4-5e0b1c866053"} />
                     </div>
                 }

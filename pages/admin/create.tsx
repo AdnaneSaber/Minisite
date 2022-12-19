@@ -84,7 +84,7 @@ const create = () => {
                                                 plugins: [
                                                     'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                                                     'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                                                    'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount', "moxiemanager"
+                                                    'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
                                                 ],
                                                 toolbar: 'undo redo | blocks | ' +
                                                     'bold italic forecolor | alignleft aligncenter ' +
