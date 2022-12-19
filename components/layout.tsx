@@ -1,6 +1,7 @@
-import Alert from './alert'
+import Nav from './nav'
 import Footer from './footer'
 import Meta from './meta'
+import KManager from './kmanager'
 
 type Props = {
   preview?: boolean
@@ -12,7 +13,7 @@ const Layout = ({ preview, children }: Props) => {
     <>
       <Meta />
       <div className="min-h-screen">
-        <Alert preview={preview} />
+        <Nav />
         <main>{children}</main>
       </div>
       <Footer />

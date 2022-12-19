@@ -5,12 +5,13 @@ import PostBody from '../../components/post-body'
 import Header from '../../components/header'
 import PostHeader from '../../components/post-header'
 import Layout from '../../components/layout'
-import { getPostBySlug, getAllPosts } from '../../lib/api'
 import PostTitle from '../../components/post-title'
 import Head from 'next/head'
 import { CMS_NAME } from '../../lib/constants'
-import markdownToHtml from '../../lib/markdownToHtml'
 import type PostType from '../../interfaces/post'
+import { authors, posts } from '@firebase'
+import { get } from 'firebase/database'
+import Author from '../../interfaces/author'
 
 type Props = {
   post: PostType
@@ -20,6 +21,7 @@ type Props = {
 
 export default function Post({ post, morePosts, preview }: Props) {
   const router = useRouter()
+  console.log(post)
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
@@ -34,13 +36,13 @@ export default function Post({ post, morePosts, preview }: Props) {
             <article className="mb-32">
               <Head>
                 <title>
-                  {post.title} | Next.js Blog Example with {CMS_NAME}
+                  {post.title} | {CMS_NAME}
                 </title>
-                <meta property="og:image" content={post.ogImage.url} />
+                <meta property="og:image" content={post.image} />
               </Head>
               <PostHeader
                 title={post.title}
-                coverImage={post.coverImage}
+                coverImage={post.image}
                 date={post.date}
                 author={post.author}
               />
@@ -60,32 +62,30 @@ type Params = {
 }
 
 export async function getStaticProps({ params }: Params) {
-  const post = getPostBySlug(params.slug, [
-    'title',
-    'date',
-    'slug',
-    'author',
-    'content',
-    'ogImage',
-    'coverImage',
-  ])
-  const content = await markdownToHtml(post.content || '')
 
+  const _posts = await get(posts)
+  const __posts: PostType[] = _posts.val()
+  const _authors = await get(authors)
+  const __authors: Author[] = _authors.val()
+  const post = __posts.filter(post => post.slug === params.slug)[0]
   return {
     props: {
       post: {
         ...post,
-        content,
-      },
+        author: {
+          ...__authors['author_' + post.author]
+        }
+      }
     },
   }
 }
 
 export async function getStaticPaths() {
-  const posts = getAllPosts(['slug'])
-
+  const _posts = await get(posts)
+  let postsData = _posts.val()
+  console.log(postsData)
   return {
-    paths: posts.map((post) => {
+    paths: postsData.map((post: PostType) => {
       return {
         params: {
           slug: post.slug,

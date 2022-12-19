@@ -7,7 +7,7 @@ import type Author from '../interfaces/author'
 type Props = {
   title: string
   coverImage: string
-  date: string
+  date: number
   excerpt: string
   author: Author
   slug: string
@@ -43,7 +43,7 @@ const HeroPost = ({
         </div>
         <div>
           <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
-          <Avatar name={author.name} picture={author.picture} />
+          <Avatar name={author.name} picture={author.image} />
         </div>
       </div>
     </section>
