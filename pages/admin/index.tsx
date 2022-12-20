@@ -2,7 +2,7 @@ import { authors, posts } from '@firebase'
 import { get } from 'firebase/database'
 import React from 'react'
 import Nav from '../../components/nav'
-import PostPreview from '../../components/post-preview'
+import { PostPreview } from '../../components/posts'
 import Author from '../../interfaces/author'
 import PostType from '../../interfaces/post'
 

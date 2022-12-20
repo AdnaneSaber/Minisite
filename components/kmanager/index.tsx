@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import React, { useContext, useEffect, useState } from 'react'
-import { getStorage, ref, listAll, StorageReference, getDownloadURL } from "firebase/storage";
-import { storage } from '@firebase';
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { getStorage, ref, listAll, StorageReference, getDownloadURL, uploadString, deleteObject, uploadBytes } from "firebase/storage";
+import { imageStorage, storage } from '@firebase';
 import { KFile } from '../../interfaces/file';
 import { CMS_NAME } from '../../lib/constants';
 import folderLogo from '@assets/KManager/folder.svg'
@@ -14,13 +14,14 @@ type propType = {
 
 
 const KManager = ({ setImage, close }: propType) => {
-    const [dragOver, setDragOver] = useState(false)
     const [upload, setUpload] = useState(true)
     const [selectedImage, setSelectedImage] = useState("")
     const [path, setPath] = useState("minisite")
     const [files, setFiles] = useState<KFile[]>([])
-    const createDirectory = () => {
+    const createDirectory = async () => {
 
+        const dir = ref(imageStorage, 'test/.ghostfile')
+        await uploadString(dir, "")
     }
     const getLinkOfImage = async (ref: StorageReference) => {
         const res = await getDownloadURL(ref)
@@ -35,7 +36,7 @@ const KManager = ({ setImage, close }: propType) => {
                 });
                 res.items.forEach(async (itemRef) => {
                     const url = await getLinkOfImage(itemRef)
-                    setFiles(e => [...e, { folder: false, name: itemRef.name, path: itemRef.fullPath, parent: itemRef.parent, url }])
+                    setFiles(e => [...e, { folder: false, name: itemRef.name, path: itemRef.fullPath, parent: itemRef.parent, url }].filter(file => file.name !== ".ghostfile"))
                 });
             }).catch((error) => {
                 alert("Problem accured" + new Error().stack)
@@ -96,42 +97,23 @@ const KManager = ({ setImage, close }: propType) => {
                         </li>
                     </ul>
                 </div>
-                {path !== "minisite" ? <button className='border rounded py-3 px-3 border-indigo-500 text-indigo-500' onClick={() => setPath("minisite")}>
-                    <svg xmlns="http://www.w3.org/2000/svg" id="Outline" fill='#6366f1' viewBox="0 0 24 24" width="16" height="16"><path d="M17.17,24a1,1,0,0,1-.71-.29L8.29,15.54a5,5,0,0,1,0-7.08L16.46.29a1,1,0,1,1,1.42,1.42L9.71,9.88a3,3,0,0,0,0,4.24l8.17,8.17a1,1,0,0,1,0,1.42A1,1,0,0,1,17.17,24Z" /></svg>
-                </button> : <></>}
+                <div className='flex gap-1'>
+                    {path !== "minisite" ? <button className='border rounded py-3 px-3 border-indigo-500 text-indigo-500' onClick={() => setPath("minisite")}>
+                        <svg xmlns="http://www.w3.org/2000/svg" id="Outline" fill='#6366f1' viewBox="0 0 24 24" width="16" height="16"><path d="M17.17,24a1,1,0,0,1-.71-.29L8.29,15.54a5,5,0,0,1,0-7.08L16.46.29a1,1,0,1,1,1.42,1.42L9.71,9.88a3,3,0,0,0,0,4.24l8.17,8.17a1,1,0,0,1,0,1.42A1,1,0,0,1,17.17,24Z" /></svg>
+                    </button> : <></>}
+                    {
+                        !upload && (
+                            <>
+                                <button className='border rounded py-3 px-3 border-indigo-500 text-indigo-500' onClick={createDirectory}>
+                                    Create directory
+                                </button>
+                            </>
+                        )
+                    }
+                </div>
                 <hr className="border-neutral-200 mt-6 mb-8" />
-                {upload ?
-                    <div>
-                        <div className={classNames("mt-1 flex justify-center rounded-md border-2 border-gray-300 px-6 pt-5 pb-6 cursor-pointer", dragOver ? "border-solid" : "border-dashed")} onDragEnter={() => setDragOver(true)} onDragLeave={() => setDragOver(false)} >
-                            <div className="space-y-1 text-center">
-                                <svg
-                                    className="mx-auto h-12 w-12 text-gray-400"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 48 48"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                        strokeWidth={2}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                                <div className="flex text-sm text-gray-600">
-                                    <label
-                                        htmlFor="file-upload"
-                                        className="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
-                                    >
-                                        <span>Upload a file</span>
-                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                                    </label>
-                                    <p className="pl-1">or drag and drop</p>
-                                </div>
-                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                            </div>
-                        </div>
-                    </div> : <div className={classNames('grid gap-6 w-full p-3 max-h-96 overflow-auto', files.length > 0 ? "md:grid-cols-4" : "")}>
+                {upload ? <UploadCard />
+                    : <div className={classNames('grid gap-6 w-full p-3 max-h-96 overflow-auto', files.length > 0 ? "md:grid-cols-4" : "")}>
                         {files.length > 0 ?
                             files.map(({ folder, url, name, path }, index) => (
                                 <ImageCard
@@ -170,7 +152,7 @@ const ImageCard = ({ src, isFolder, name, path, setPath }: imagePropType) => {
 
     const { update } = useContext(TextContext);
     return (
-        <div className='rounded shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all' onClick={() => update(e => { return { active: false, path: src } })}>
+        <div className='rounded shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all' onClick={() => !isFolder ? update(() => { return { active: false, path: src } }) : null}>
             {isFolder ?
                 <div className="p-8" onClick={() => setPath(path)}>
                     <img src={folderLogo.src} alt="" />
@@ -179,6 +161,84 @@ const ImageCard = ({ src, isFolder, name, path, setPath }: imagePropType) => {
                 :
                 <img src={src} className='w-full h-full object-contain' alt={CMS_NAME} />
             }
+        </div>
+    )
+}
+
+const UploadCard = () => {
+    const [dragOver, setDragOver] = useState(false)
+    const [file, setFile] = useState(null);
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
+    }
+    const handleDrop = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const files = event.dataTransfer.files;
+        setFile(files);
+        // do something with the files here
+    }
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const handleUpload = () => {
+        if (!file) {
+            return;
+        }
+
+        for (const f in file) {
+            if (Object.prototype.hasOwnProperty.call(file, f)) {
+                const element = file[f];
+                const fileRef = ref(imageStorage, element.name)
+                uploadBytes(fileRef, element).then((snapshot) => {
+                    console.log('Uploaded a blob or file!');
+                });
+            }
+        }
+    }
+    useEffect(() => {
+        handleUpload()
+    }, [file])
+
+    return (
+        <div>
+            <div
+                className={classNames("mt-1 flex justify-center rounded-md border-2 border-gray-300 px-6 pt-5 pb-6 cursor-pointer", dragOver ? "border-solid" : "border-dashed")}
+                onMouseLeave={() => setDragOver(false)}
+                onDragEnter={() => setDragOver(true)}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+            >
+                <div className="space-y-1 text-center">
+                    <svg
+                        className="mx-auto h-12 w-12 text-gray-400"
+                        stroke="currentColor"
+                        fill="none"
+                        viewBox="0 0 48 48"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                    <div className="flex text-sm text-gray-600">
+                        <label
+                            htmlFor="file-upload"
+                            className="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+                        >
+                            <span>Upload a file</span>
+                            <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                </div>
+            </div>
         </div>
     )
 }

@@ -28,4 +28,4 @@ const authors = ref(db, 'authors/')
 const sizeStorageRef = ref(db, 'storage-size/')
 const imageStorage = storageRef(storage, 'minisite/')
 
-export { db, storage, posts, sizeStorageRef, imageStorage, authors };
+export { db, storage, posts, sizeStorageRef, imageStorage, authors, storageRef };

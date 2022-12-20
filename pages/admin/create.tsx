@@ -109,7 +109,6 @@ const create = () => {
                                         <Editor
                                             apiKey='xk5ocitkbtei466ugy5u5u4d2bs1lokeroh3gffu0wjxc2cs'
                                             onInit={(evt, editor) => editorRef.current = editor}
-                                            initialValue="<p>This is the initial content of the editor.</p>"
                                             id="about"
                                             onFocus={(e) => e.target.editorContainer.className = "!border-indigo-500 !ring-indigo-500 !shadow-sm tox tox-tinymce "}
                                             onBlur={(e) => e.target.editorContainer.className = "!border-gray-300 !shadow-sm tox tox-tinymce"}
