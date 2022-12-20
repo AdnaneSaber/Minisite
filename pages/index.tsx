@@ -20,7 +20,7 @@ type Props = {
 
 const Index = ({ postsData }: Props) => {
   const heroPost = postsData[0]
-  const morePosts = postsData.slice(1)
+  const morePosts = postsData
   return (
     <>
       <Head>
@@ -47,17 +47,21 @@ export const getStaticProps = async () => {
   const _posts = await get(posts)
   const _authors = await get(authors)
   const __authors: Author[] = _authors.val()
-  let postsData: Post[] = _posts.val()
-  postsData = postsData.map(post => {
-    return {
-      ...post,
-      author: {
-        ...__authors['author_' + post.author]
-      }
+  let postsData: { [key: string]: Post } = _posts.val()
+  let _postsData: Post[] = []
+  for (const key in postsData) {
+    if (Object.prototype.hasOwnProperty.call(postsData, key)) {
+      const post = postsData[key];
+      _postsData.push({
+        ...post,
+        author: {
+          ...__authors['author_' + post.author]
+        }
+      })
     }
-  })
+  }
   return {
-    props: { postsData },
+    props: { postsData: _postsData },
   }
 }
 export default Index

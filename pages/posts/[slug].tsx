@@ -21,37 +21,34 @@ type Props = {
 
 export default function Post({ post, morePosts, preview }: Props) {
   const router = useRouter()
-  console.log(post)
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
   return (
-    <Layout preview={preview}>
-      <Container>
-        <Header />
-        {router.isFallback ? (
-          <PostTitle>Loading…</PostTitle>
-        ) : (
-          <>
-            <article className="mb-32">
-              <Head>
-                <title>
-                  {post.title} | {CMS_NAME}
-                </title>
-                <meta property="og:image" content={post.image} />
-              </Head>
-              <PostHeader
-                title={post.title}
-                coverImage={post.image}
-                date={post.date}
-                author={post.author}
-              />
-              <PostBody content={post.content} />
-            </article>
-          </>
-        )}
-      </Container>
-    </Layout>
+    <Container>
+      <Header />
+      {router.isFallback ? (
+        <PostTitle>Loading…</PostTitle>
+      ) : (
+        <>
+          <article className="mb-32">
+            <Head>
+              <title>
+                {post.title} | {CMS_NAME}
+              </title>
+              <meta property="og:image" content={post.image} />
+            </Head>
+            <PostHeader
+              title={post.title}
+              coverImage={post.image}
+              date={post.date}
+              author={post.author}
+            />
+            <PostBody content={post.content} />
+          </article>
+        </>
+      )}
+    </Container>
   )
 }
 
@@ -67,7 +64,21 @@ export async function getStaticProps({ params }: Params) {
   const __posts: PostType[] = _posts.val()
   const _authors = await get(authors)
   const __authors: Author[] = _authors.val()
-  const post = __posts.filter(post => post.slug === params.slug)[0]
+
+  let postsData: { [key: string]: PostType } = _posts.val()
+  let _postsData: PostType[] = []
+  for (const key in postsData) {
+    if (Object.prototype.hasOwnProperty.call(postsData, key)) {
+      const post = postsData[key];
+      _postsData.push({
+        ...post,
+        author: {
+          ...__authors['author_' + post.author]
+        }
+      })
+    }
+  }
+  const post = _postsData.filter(post => post.slug === params.slug)[0]
   return {
     props: {
       post: {
@@ -82,10 +93,18 @@ export async function getStaticProps({ params }: Params) {
 
 export async function getStaticPaths() {
   const _posts = await get(posts)
-  let postsData = _posts.val()
-  console.log(postsData)
+  let postsData: { [key: string]: PostType } = _posts.val()
+  let _postsData: PostType[] = []
+  for (const key in postsData) {
+    if (Object.prototype.hasOwnProperty.call(postsData, key)) {
+      const post = postsData[key];
+      _postsData.push({
+        ...post,
+      })
+    }
+  }
   return {
-    paths: postsData.map((post: PostType) => {
+    paths: _postsData.map((post: PostType) => {
       return {
         params: {
           slug: post.slug,
