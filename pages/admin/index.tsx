@@ -40,16 +40,20 @@ export const getStaticProps = async () => {
     const _posts = await get(posts)
     const _authors = await get(authors)
     const __authors: Author[] = _authors.val()
-    let postsData: PostType[] = _posts.val()
-    postsData = postsData.map(post => {
-        return {
-            ...post,
-            author: {
-                ...__authors['author_' + post.author]
-            }
+    let postsData: { [key: string]: PostType } = _posts.val()
+    let _postsData: PostType[] = []
+    for (const key in postsData) {
+        if (Object.prototype.hasOwnProperty.call(postsData, key)) {
+            const post = postsData[key];
+            _postsData.push({
+                ...post,
+                author: {
+                    ...__authors['author_' + post.author]
+                }
+            })
         }
-    })
+    }
     return {
-        props: { postsData },
+        props: { postsData: _postsData },
     }
 }
