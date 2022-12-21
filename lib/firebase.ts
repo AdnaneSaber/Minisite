@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getStorage, ref as storageRef } from "firebase/storage";
 
 import { getDatabase, ref } from "firebase/database";
+import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,7 +21,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-
+const auth = getAuth();
 const db = getDatabase(firebaseApp);
 const storage = getStorage(firebaseApp);
 const posts = ref(db, 'posts/')
@@ -28,4 +29,4 @@ const authors = ref(db, 'authors/')
 const sizeStorageRef = ref(db, 'storage-size/')
 const imageStorage = storageRef(storage, 'minisite/')
 
-export { db, storage, posts, sizeStorageRef, imageStorage, authors, storageRef };
+export { db, storage, posts, sizeStorageRef, imageStorage, authors, auth, storageRef };

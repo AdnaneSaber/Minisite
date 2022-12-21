@@ -7,29 +7,13 @@ import Link from "next/link";
 import { CMS_NAME } from "../lib/constants";
 
 import { useTheme } from "next-themes";
+import { getLogos } from "../lib/getLogos";
 
-type logoType = {
-  dark: string,
-  light: string
-}
 
 const Nav = () => {
   const [notifsShow, setNotifsShow] = useState(false);
-  const [logo, setLogo] = useState<logoType>({
-    dark: "",
-    light: ""
-  });
+  const themeLogo = getLogos();
   const theme = useTheme();
-  useEffect(() => {
-    const imagesRef = ref(storage, "minisite/");
-    getDownloadURL(ref(imagesRef, `logo-dark.svg`)).then(
-      (url) => setLogo(e => { return { ...e, dark: url } })
-    );
-    getDownloadURL(ref(imagesRef, `logo-light.svg`)).then(
-      (url) => setLogo(e => { return { ...e, light: url } })
-    );
-
-  }, []);
 
   return (
     <header>
@@ -89,7 +73,7 @@ const Nav = () => {
               <span className="sr-only">Toggle sidebar</span>
             </button> */}
             <Link href="/" className="flex mr-4">
-              <img src={logo[theme.theme]} className="mr-3 h-12" alt={CMS_NAME + " Logo"} />
+              <img src={themeLogo[theme.theme] ?? themeLogo.light} className="mr-3 h-12" alt={CMS_NAME + " Logo"} />
             </Link>
             <form action="#" method="GET" className="hidden lg:block lg:pl-2">
               <label htmlFor="topbar-search" className="sr-only">
@@ -141,8 +125,8 @@ const Nav = () => {
                 ></path>
               </svg>
             </button>
-
-            {/* <button
+            <>
+              {/* <button
               type="button"
               onClick={() => setNotifsShow((e) => !e)}
               data-dropdown-toggle="notification-dropdown"
@@ -161,7 +145,7 @@ const Nav = () => {
               </svg>
             </button> */}
 
-            {/* <div
+              {/* <div
               className={cn(
                 "overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:divide-gray-600 dark:bg-gray-700",
                 notifsShow ? "absolute top-14 right-0" : "hidden"
@@ -389,6 +373,7 @@ const Nav = () => {
                 </div>
               </a>
             </div> */}
+            </>
             <button
               id="theme-toggle"
               onClick={() => theme.setTheme(theme.theme === "light" ? "dark" : "light")}

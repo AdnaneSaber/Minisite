@@ -4,6 +4,7 @@ import { ThemeProvider, useTheme } from 'next-themes';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import Layout from '../components/layout';
+import { getLogos } from '../lib/getLogos';
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode | null
 }
