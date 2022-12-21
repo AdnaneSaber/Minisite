@@ -1,7 +1,7 @@
 import React from 'react'
 import PostType from '../../interfaces/post'
 import { PostPreview } from '../../components/posts'
-import { get } from 'firebase/database'
+import { get, remove } from 'firebase/database'
 import { authors, posts } from '@firebase'
 import Author from '../../interfaces/author'
 
@@ -10,6 +10,9 @@ type propsType = {
 }
 
 const DeletePage = ({ posts }: propsType) => {
+    const handleDelete = () => {
+        // TODO change the posts object from list to object to get access to key and be able to delete from it and add to it 
+    }
     return (
         <>
             {
