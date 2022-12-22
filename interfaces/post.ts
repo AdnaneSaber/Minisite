@@ -8,6 +8,12 @@ type PostType = {
   author: Author
   excerpt: string
   content: string
+  uid: string
 }
 
-export default PostType
+interface IPosts {
+  [key: string]: PostType
+}
+
+
+export type { IPosts, PostType }

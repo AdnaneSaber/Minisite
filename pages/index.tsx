@@ -5,22 +5,22 @@ import Intro from '../components/intro'
 import Layout from '../components/layout'
 import Head from 'next/head'
 import { CMS_NAME } from '../lib/constants'
-import { authors, posts, storage } from '../lib/firebase'
-import Post from '../interfaces/post'
+import { authors, posts as postsRef, storage } from '../lib/firebase'
 import { get } from "firebase/database";
 import Author from '../interfaces/author'
 import { getDownloadURL, ref } from 'firebase/storage'
 import { NextPage } from 'next'
 import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
+import { IPosts } from '../interfaces/post'
 
 type Props = {
-  postsData: Post[]
+  posts: IPosts
 }
 
-const Index = ({ postsData }: Props) => {
-  const heroPost = postsData[0]
-  const morePosts = postsData
+const Index = ({ posts }: Props) => {
+  const heroPost = posts[Object.keys(posts)[0]]
+  const morePosts = posts
   return (
     <>
       <Head>
@@ -38,30 +38,27 @@ const Index = ({ postsData }: Props) => {
             excerpt={heroPost.excerpt}
           />
         )}
-        {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+        {morePosts && <MoreStories posts={morePosts} />}
       </Container>
     </>
   )
 }
+
 export const getStaticProps = async () => {
-  const _posts = await get(posts)
+  const _posts = await get(postsRef)
   const _authors = await get(authors)
   const __authors: Author[] = _authors.val()
-  let postsData: { [key: string]: Post } = _posts.val()
-  let _postsData: Post[] = []
+  let postsData: IPosts = _posts.val()
+  let _postsData: IPosts = {}
   for (const key in postsData) {
     if (Object.prototype.hasOwnProperty.call(postsData, key)) {
       const post = postsData[key];
-      _postsData.push({
-        ...post,
-        author: {
-          ...__authors['author_' + post.author]
-        }
-      })
+      post.author = __authors['author_' + post.author]
+      _postsData[key] = post
     }
   }
   return {
-    props: { postsData: _postsData },
+    props: { posts: _postsData },
   }
 }
 export default Index

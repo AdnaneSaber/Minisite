@@ -17,7 +17,7 @@ import {
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Author from '../../interfaces/author'
-import PostType from '../../interfaces/post'
+import { PostType } from '../../interfaces/post'
 
 type propType = {
     postsData: PostType[]
